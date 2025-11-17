@@ -1,4 +1,4 @@
-package com.example.flashdeck.ui
+package com.example.myapplication.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,18 +8,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.flashdeck.viewmodel.MainViewModel
+import com.example.myapplication.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
-    val allDecks by viewModel.allDecks.collectAsState(initial = emptyList())
+    val allDecks by viewModel.allDecks.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var newDeckName by remember { mutableStateOf("") }
 

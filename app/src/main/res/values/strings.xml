@@ -1,11 +1,21 @@
 <resources>
-    <string name="Flash_Deck">My Application</string>
+    <string name="app_name">FlashDeck</string>
     <string name="add_new_card">Add New Card</string>
     <string name="front_word_question">Front (Word/Question)</string>
     <string name="auto_define">Auto-Define</string>
     <string name="tap_to_auto_define">Tap the magnifying glass to Auto-Define</string>
     <string name="back_definition_answer">Back (Definition/Answer)</string>
     <string name="translate">Translate</string>
-    <string name="tap_to_translate">Tap refresh to Translate (English -> Spanish)</string>
+    <string name="tap_to_translate">Tap the translate icon for a sample translation</string>
     <string name="save_card">Save Card</string>
+    <string name="review_mode">Review Mode</string>
+    <string name="no_cards_in_deck">No cards in this deck yet!</string>
+    <string name="deck_complete">Deck complete!</string>
+    <string name="restart">Restart</string>
+    <string name="card_progress">Card %1$d / %2$d</string>
+    <string name="answer">ANSWER</string>
+    <string name="question">QUESTION</string>
+    <string name="speak">Speak</string>
+    <string name="listen">Listen</string>
+    <string name="next_card">Next Card</string>
 </resources>
