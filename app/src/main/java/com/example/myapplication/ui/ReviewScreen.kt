@@ -35,8 +35,11 @@ fun ReviewScreen(navController: NavController, viewModel: MainViewModel, deckId:
     }
 
     val cards by viewModel.currentDeckCards.collectAsState()
+
+    // State for Logic
     var currentIndex by rememberSaveable { mutableIntStateOf(0) }
     var isFlipped by rememberSaveable { mutableStateOf(false) }
+    var score by rememberSaveable { mutableIntStateOf(0) } // Track Score
 
     Scaffold(
         topBar = {
@@ -44,7 +47,7 @@ fun ReviewScreen(navController: NavController, viewModel: MainViewModel, deckId:
                 title = { Text("Review Session", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -66,10 +69,15 @@ fun ReviewScreen(navController: NavController, viewModel: MainViewModel, deckId:
                 val isFinished = currentIndex >= cards.size
 
                 if (isFinished) {
+                    // Calculate Final Score
+                    val finalPercentage = if (cards.isNotEmpty()) (score * 100) / cards.size else 0
+
                     FinishedState(
+                        score = finalPercentage,
                         onRestart = {
                             currentIndex = 0
                             isFlipped = false
+                            score = 0
                         },
                         onBack = { navController.popBackStack() }
                     )
@@ -115,7 +123,7 @@ fun ReviewScreen(navController: NavController, viewModel: MainViewModel, deckId:
                             Text("Show Answer")
                         }
                     } else {
-                        // Back Controls (SRS Logic)
+                        // Back Controls (Scoring Logic)
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -133,9 +141,10 @@ fun ReviewScreen(navController: NavController, viewModel: MainViewModel, deckId:
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                // "I Forgot" Button
+                                // "I Forgot" Button (Wrong)
                                 Button(
                                     onClick = {
+                                        // Logic: Record review, move next, NO score increase
                                         viewModel.recordCardReview(currentCard.id, isCorrect = false)
                                         isFlipped = false
                                         currentIndex++
@@ -149,15 +158,17 @@ fun ReviewScreen(navController: NavController, viewModel: MainViewModel, deckId:
                                     Text("Forgot")
                                 }
 
-                                // "I Know It" Button
+                                // "I Know It" Button (Right)
                                 Button(
                                     onClick = {
+                                        // Logic: Record review, move next, INCREASE score
                                         viewModel.recordCardReview(currentCard.id, isCorrect = true)
+                                        score++
                                         isFlipped = false
                                         currentIndex++
                                     },
                                     modifier = Modifier.weight(1f).height(56.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)), // Hardcoded Success Green
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)), // Green
                                     shape = RoundedCornerShape(16.dp)
                                 ) {
                                     Icon(Icons.Default.Check, null)
@@ -257,7 +268,7 @@ fun EmptyStateMessage() {
 }
 
 @Composable
-fun FinishedState(onRestart: () -> Unit, onBack: () -> Unit) {
+fun FinishedState(score: Int, onRestart: () -> Unit, onBack: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -266,7 +277,7 @@ fun FinishedState(onRestart: () -> Unit, onBack: () -> Unit) {
         Text("🎉", fontSize = 64.sp)
         Spacer(Modifier.height(16.dp))
         Text("Session Complete!", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("You reviewed all cards.", style = MaterialTheme.typography.bodyLarge, color = Color.Gray)
+        Text("Final Score: $score%", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
 
         Spacer(Modifier.height(32.dp))
 

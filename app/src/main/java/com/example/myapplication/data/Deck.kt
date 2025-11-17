@@ -7,5 +7,8 @@ import androidx.room.PrimaryKey
 data class Deck(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val name: String
+    val name: String,
+    // Score from the last review session, stored as a percentage (0-100).
+    // -1 indicates no score has been recorded yet.
+    val score: Int = -1
 )

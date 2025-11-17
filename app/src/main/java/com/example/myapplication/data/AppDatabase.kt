@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Deck::class, Card::class], version = 1, exportSchema = false)
+@Database(entities = [Deck::class, Card::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dao(): FlashcardDao
@@ -20,7 +20,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "flashcard_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // Clear database on schema changes (for development)
+                    .build()
                 INSTANCE = instance
                 instance
             }

@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation("androidx.compose.material:material-icons-extended")
 
     // --- CRITICAL UPDATE: ViewModel for Compose ---
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
@@ -76,6 +77,7 @@ dependencies {
     // 2. Retrofit (Networking)
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 
     // 3. Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
@@ -86,6 +88,9 @@ dependencies {
 
     // 5. Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // 6. DataStore (for preferences)
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // --- TESTING ---
     testImplementation(libs.junit)

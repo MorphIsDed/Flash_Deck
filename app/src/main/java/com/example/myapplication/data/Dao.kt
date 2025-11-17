@@ -19,4 +19,7 @@ interface FlashcardDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCard(card: Card)
+
+    @Query("UPDATE decks SET score = :score WHERE id = :deckId")
+    suspend fun updateDeckScore(deckId: Int, score: Int)
 }

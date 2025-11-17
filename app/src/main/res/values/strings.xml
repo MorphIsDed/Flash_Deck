@@ -20,4 +20,18 @@
     <string name="next_card">Next Card</string>
     <string name="back">Back</string>
     <string name="app_logo">App Logo</string>
+    <string name="was_wrong">I was wrong</string>
+    <string name="was_right">I was right</string>
+    <string name="final_score">Final Score: %1$d%%</string>
+    <string name="deck_score">Score: %1$s</string>
+    <string name="deck_name">Deck Name</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_cards">Add Cards</string>
+    <string name="new_deck">New Deck</string>
+    <string name="add_new_deck">Add new deck</string>
+    <string name="deck_count">%1$d Decks</string>
+    <string name="create_new_deck">Create New Deck</string>
+    <string name="my_library">My Library</string>
+    <string name="tap_to_study">Tap to study</string>
 </resources>

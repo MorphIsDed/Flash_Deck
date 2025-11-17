@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.viewmodel.MainViewModel
 
@@ -31,6 +30,7 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
 
     Scaffold(
         topBar = {
+            // AESTHETIC UPGRADE: Large Title
             LargeTopAppBar(
                 title = {
                     Column {
@@ -39,6 +39,16 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                             "${allDecks.size} Decks",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                actions = {
+                    // Existing Settings Button
+                    IconButton(onClick = { navController.navigate("settings") }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -59,19 +69,27 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
             }
         }
     ) { padding ->
-        LazyColumn(
-            contentPadding = padding,
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(allDecks) { deck ->
-                DeckItem(
-                    name = deck.name,
-                    onReviewClick = { navController.navigate("review/${deck.id}") },
-                    onAddCardClick = { navController.navigate("add_card/${deck.id}") }
-                )
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                contentPadding = padding,
+                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(allDecks) { deck ->
+                    DeckItem(
+                        name = deck.name,
+                        onReviewClick = { navController.navigate("review/${deck.id}") },
+                        onAddCardClick = { navController.navigate("add_card/${deck.id}") }
+                    )
+                }
+                item { Spacer(Modifier.height(80.dp)) } // Space for FAB
             }
-            item { Spacer(Modifier.height(80.dp)) } // Space for FAB
+            
+            // Floating Draggable AI Chat Button
+            FloatingChatButton(
+                onClick = { navController.navigate("chat") },
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         if (showDialog) {
@@ -106,7 +124,7 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
 
 @Composable
 fun DeckItem(name: String, onReviewClick: () -> Unit, onAddCardClick: () -> Unit) {
-    // Random-ish gradient for aesthetics
+    // AESTHETIC UPGRADE: Gradient Background
     val gradientBrush = Brush.horizontalGradient(
         colors = listOf(
             MaterialTheme.colorScheme.primaryContainer,
@@ -145,10 +163,11 @@ fun DeckItem(name: String, onReviewClick: () -> Unit, onAddCardClick: () -> Unit
                 )
             }
 
+            // AESTHETIC UPGRADE: Glassmorphism-style Add Button
             IconButton(
                 onClick = onAddCardClick,
                 modifier = Modifier
-                    .background(Color.White.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
             ) {
                 Icon(Icons.Default.Add, "Add Cards", tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }

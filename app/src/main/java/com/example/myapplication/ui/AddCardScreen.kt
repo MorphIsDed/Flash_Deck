@@ -1,88 +1,281 @@
 package com.example.myapplication.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Refresh // Using Refresh as the translate icon
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.myapplication.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCardScreen(navController: NavController, viewModel: MainViewModel, deckId: Int) {
-    var frontText by remember { mutableStateOf("") }
-    var backText by remember { mutableStateOf("") }
-    val isLoading by viewModel.isLoading.collectAsState(initial = false)
+fun AddCardScreen(
+    navController: NavController,
+    viewModel: MainViewModel,
+    deckId: Int
+) {
+    val isLoading by viewModel.isLoading.collectAsState()
+    var frontText by rememberSaveable { mutableStateOf("") }
+    var backText by rememberSaveable { mutableStateOf("") }
+    var lookupWord by rememberSaveable { mutableStateOf("") }
+    var dictionaryResult by remember { mutableStateOf<String?>(null) }
+    var textToTranslate by rememberSaveable { mutableStateOf("") }
+    var translationResult by remember { mutableStateOf<String?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    fun showMessage(message: String) {
+        scope.launch { snackbarHostState.showSnackbar(message) }
+    }
+
+    fun handleAddCard() {
+        if (frontText.isBlank() || backText.isBlank()) {
+            showMessage("Please fill in both sides")
+            return
+        }
+        viewModel.addCard(deckId, frontText.trim(), backText.trim())
+        showMessage("Card saved")
+        frontText = ""
+        backText = ""
+    }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Add New Card") }) }
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Add Cards", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = { handleAddCard() },
+                icon = { Icon(Icons.Default.Save, contentDescription = "Save Card") },
+                text = { Text("Save Card") }
+            )
+        }
     ) { padding ->
-        Column(
-            modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
         ) {
-            // --- FRONT TEXT (With Dictionary Button) ---
-            OutlinedTextField(
-                value = frontText,
-                onValueChange = { frontText = it },
-                label = { Text("Front (Word/Question)") },
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(
-                        onClick = { viewModel.fetchDefinition(frontText) { res -> backText = res } },
-                        enabled = frontText.isNotEmpty()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Icon(Icons.Default.Search, contentDescription = "Auto-Define")
+                        Text("Card Content", style = MaterialTheme.typography.titleMedium)
+                        OutlinedTextField(
+                            value = frontText,
+                            onValueChange = { frontText = it },
+                            label = { Text("Front Text") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = backText,
+                            onValueChange = { backText = it },
+                            label = { Text("Back Text") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        TextButton(onClick = { viewModel.speak(backText) }, enabled = backText.isNotBlank()) {
+                            Icon(Icons.Default.VolumeUp, contentDescription = null)
+                            Spacer(Modifier.size(4.dp))
+                            Text("Preview pronunciation")
+                        }
                     }
                 }
-            )
-            Text("Tap the magnifying glass to Auto-Define", style = MaterialTheme.typography.bodySmall)
 
-            // --- BACK TEXT (With Translate Button) ---
-            OutlinedTextField(
-                value = backText,
-                onValueChange = { backText = it },
-                label = { Text("Back (Definition/Answer)") },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3,
-                trailingIcon = {
-                    IconButton(
-                        // ✅ CRITICAL FIX: Calling the new Smart Translation function
-                        onClick = { viewModel.detectLanguageAndTranslate(frontText) { res -> backText = res } },
-                        enabled = frontText.isNotEmpty()
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // ✅ CRITICAL FIX: Using Refresh icon to avoid import errors
-                        Icon(Icons.Default.Refresh, contentDescription = "Translate")
+                        Text("Smart Dictionary", style = MaterialTheme.typography.titleMedium)
+                        OutlinedTextField(
+                            value = lookupWord,
+                            onValueChange = { lookupWord = it },
+                            label = { Text("Lookup Word") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+                        Button(
+                            onClick = {
+                                if (lookupWord.isBlank()) {
+                                    showMessage("Enter a word first")
+                                } else {
+                                    viewModel.fetchDefinition(lookupWord.trim()) { result ->
+                                        scope.launch { dictionaryResult = result }
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Fetch Definition")
+                        }
+                        dictionaryResult?.let { result ->
+                            Divider()
+                            Text(
+                                text = result,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
-            )
-            Text("Tap icon to Auto-Translate", style = MaterialTheme.typography.bodySmall)
+
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text("AI Translation", style = MaterialTheme.typography.titleMedium)
+                        OutlinedTextField(
+                            value = textToTranslate,
+                            onValueChange = { textToTranslate = it },
+                            label = { Text("Text to translate") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Button(
+                            onClick = {
+                                if (textToTranslate.isBlank()) {
+                                    showMessage("Enter some text to translate")
+                                } else {
+                                    viewModel.translateText(textToTranslate.trim()) { result ->
+                                        scope.launch { translationResult = result }
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Translate")
+                        }
+                        translationResult?.let { translated ->
+                            Divider()
+                            Text(
+                                text = translated,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            RowWithActions(
+                                onUse = {
+                                    translationResult?.let { backText = it }
+                                    showMessage("Filled back text with translation")
+                                },
+                                onCopy = {
+                                    translationResult?.let { backText = it }
+                                },
+                                onSpeak = { viewModel.speak(translated) }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(72.dp))
+            }
 
             if (isLoading) {
-                CircularProgressIndicator()
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                onClick = {
-                    viewModel.addCard(deckId, frontText, backText)
-                    navController.popBackStack()
-                },
-                enabled = frontText.isNotEmpty() && backText.isNotEmpty()
-            ) {
-                Icon(Icons.Default.Check, null)
-                Spacer(Modifier.width(8.dp))
-                Text("Save Card")
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 16.dp)
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun RowWithActions(
+    onUse: () -> Unit,
+    onCopy: () -> Unit,
+    onSpeak: () -> Unit
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AssistChip(
+            onClick = onUse,
+            label = { Text("Use as answer") },
+            colors = AssistChipDefaults.assistChipColors()
+        )
+        AssistChip(
+            onClick = onCopy,
+            label = { Text("Copy") },
+            leadingIcon = { Icon(Icons.Default.ContentCopy, contentDescription = null) }
+        )
+        AssistChip(
+            onClick = onSpeak,
+            label = { Text("Listen") },
+            leadingIcon = { Icon(Icons.Default.VolumeUp, contentDescription = null) }
+        )
     }
 }
