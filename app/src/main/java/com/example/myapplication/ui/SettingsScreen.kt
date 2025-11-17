@@ -1,11 +1,13 @@
 package com.example.myapplication.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,7 +36,7 @@ fun SettingsScreen(
                 title = { Text("Settings", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -103,7 +105,63 @@ fun SettingsScreen(
                     onToggle = { settingsViewModel.setReduceAnimations(it) }
                 )
             }
+
+            // Statistics
+            SettingsSection(title = "Statistics") {
+                SettingsActionItem(
+                    title = "View Statistics",
+                    description = "Track your learning progress",
+                    onClick = { navController.navigate("statistics") }
+                )
+            }
+
+            // About & Feedback
+            SettingsSection(title = "About") {
+                SettingsActionItem(
+                    title = "About",
+                    description = "App information and features",
+                    onClick = { navController.navigate("about") }
+                )
+                SettingsActionItem(
+                    title = "Feedback",
+                    description = "Share your thoughts and suggestions",
+                    onClick = { navController.navigate("feedback") }
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun SettingsActionItem(
+    title: String,
+    description: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 12.dp, horizontal = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Icon(
+            androidx.compose.material.icons.Icons.Default.ChevronRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

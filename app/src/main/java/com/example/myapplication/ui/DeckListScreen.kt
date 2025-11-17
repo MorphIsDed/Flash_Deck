@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,26 +30,46 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
     val allDecks by viewModel.allDecks.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var newDeckName by remember { mutableStateOf("") }
+    var searchQuery by remember { mutableStateOf("") }
+
+    val filteredDecks = remember(allDecks, searchQuery) {
+        if (searchQuery.isBlank()) {
+            allDecks
+        } else {
+            allDecks.filter { it.name.contains(searchQuery, ignoreCase = true) }
+        }
+    }
 
     Scaffold(
         topBar = {
-            // AESTHETIC UPGRADE: Large Title
             LargeTopAppBar(
                 title = {
-                    Column {
-                        Text("My Library", fontWeight = FontWeight.Bold)
-                        Text(
-                            "${allDecks.size} Decks",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                    Text("My Library", fontWeight = FontWeight.Bold)
+                },
+                navigationIcon = {
+                    // Profile Icon (Clicking does nothing for now, placeholder)
+                    IconButton(onClick = { /* Navigate to profile if added */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Profile",
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
                 actions = {
-                    // Existing Settings Button
+                    // AI Chat Button
+                    IconButton(onClick = { navController.navigate("chat") }) {
+                        Icon(
+                            imageVector = Icons.Default.Face,
+                            contentDescription = "AI Study Buddy",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                    // Settings Button
                     IconButton(onClick = { navController.navigate("settings") }) {
                         Icon(
-                            Icons.Default.Settings,
+                            imageVector = Icons.Default.Settings,
                             contentDescription = "Settings",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
@@ -69,27 +92,63 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
             }
         }
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Search Bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(top = padding.calculateTopPadding()),
+                placeholder = { Text("Search decks...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                )
+            )
+
+            // Deck Count
+            val deckCount = filteredDecks.size
+            val countText = if (deckCount == 1) "1 Deck Found" else "$deckCount Decks Found"
+
+            Text(
+                text = countText,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+
             LazyColumn(
-                contentPadding = padding,
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 80.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(allDecks) { deck ->
+                if (filteredDecks.isEmpty() && searchQuery.isNotBlank()) {
+                    item {
+                        Text(
+                            text = "No results found.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+
+                items(filteredDecks) { deck ->
                     DeckItem(
                         name = deck.name,
                         onReviewClick = { navController.navigate("review/${deck.id}") },
                         onAddCardClick = { navController.navigate("add_card/${deck.id}") }
                     )
                 }
-                item { Spacer(Modifier.height(80.dp)) } // Space for FAB
             }
-            
-            // Floating Draggable AI Chat Button
-            FloatingChatButton(
-                onClick = { navController.navigate("chat") },
-                modifier = Modifier.fillMaxSize()
-            )
         }
 
         if (showDialog) {
@@ -124,7 +183,6 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
 
 @Composable
 fun DeckItem(name: String, onReviewClick: () -> Unit, onAddCardClick: () -> Unit) {
-    // AESTHETIC UPGRADE: Gradient Background
     val gradientBrush = Brush.horizontalGradient(
         colors = listOf(
             MaterialTheme.colorScheme.primaryContainer,
@@ -163,7 +221,6 @@ fun DeckItem(name: String, onReviewClick: () -> Unit, onAddCardClick: () -> Unit
                 )
             }
 
-            // AESTHETIC UPGRADE: Glassmorphism-style Add Button
             IconButton(
                 onClick = onAddCardClick,
                 modifier = Modifier

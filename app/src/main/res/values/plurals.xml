@@ -1,0 +1,10 @@
+<resources>
+    <plurals name="deck_count">
+        <item quantity="one">%1$d Deck</item>
+        <item quantity="other">%1$d Decks</item>
+    </plurals>
+    <plurals name="found_decks">
+        <item quantity="one">Found %1$d deck</item>
+        <item quantity="other">Found %1$d decks</item>
+    </plurals>
+</resources>

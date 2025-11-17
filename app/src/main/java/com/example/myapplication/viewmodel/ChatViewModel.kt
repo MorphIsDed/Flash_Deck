@@ -1,9 +1,9 @@
 package com.example.myapplication.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,12 +17,13 @@ data class ChatMessage(
 
 class ChatViewModel : ViewModel() {
 
-    // ⚠️ REPLACE WITH YOUR ACTUAL API KEY
-    private val apiKey = "AIzaSyA1KY4rZZacbjxr8jTw1Cg-qyg9x1gig_8"
+    // 🛑 STOP: DID YOU PASTE YOUR KEY HERE? 🛑
+    private val apiKey = "YOUR_API_KEY_HERE"
 
-    // Initialize Gemini (Flash is faster/cheaper for chat)
+    // ✅ FIXED: Using 'gemini-pro' because it is the most stable model.
+    // If this works, you can try 'gemini-1.5-flash-001' later.
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-1.5-flash",
+        modelName = "gemini-pro",
         apiKey = apiKey
     )
 
@@ -37,7 +38,7 @@ class ChatViewModel : ViewModel() {
     fun sendMessage(userMessage: String) {
         if (userMessage.isBlank()) return
 
-        // 1. Add User Message to List
+        // 1. Add User Message
         val currentList = _messages.value.toMutableList()
         currentList.add(ChatMessage(userMessage, true))
         _messages.value = currentList
@@ -45,17 +46,29 @@ class ChatViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
+                if (apiKey == "AIzaSyA1KY4rZZacbjxr8jTw1Cg-qyg9x1gig_8" || apiKey.isBlank()) {
+                    throw Exception("API Key is missing! Check ChatViewModel.")
+                }
+
                 // 2. Send to Gemini
                 val response = generativeModel.generateContent(userMessage)
 
-                // 3. Add AI Response to List
-                val aiResponse = response.text ?: "I couldn't think of a response."
-                currentList.add(ChatMessage(aiResponse, false))
-                _messages.value = currentList // Update UI
+                // 3. Add AI Response
+                // We use safe call ?.text to prevent crashes if response is null
+                val aiResponse = response.text ?: "I couldn't generate a response."
+
+                val newList = _messages.value.toMutableList()
+                newList.add(ChatMessage(aiResponse, false))
+                _messages.value = newList
 
             } catch (e: Exception) {
-                currentList.add(ChatMessage("Error: ${e.localizedMessage}", false, true))
-                _messages.value = currentList
+                // Log the error so you can see it in Logcat
+                Log.e("ChatViewModel", "Error sending message", e)
+
+                val errorList = _messages.value.toMutableList()
+                // Show a user-friendly error bubble
+                errorList.add(ChatMessage("Error: ${e.message ?: "Unknown error"}", false, true))
+                _messages.value = errorList
             } finally {
                 _isLoading.value = false
             }

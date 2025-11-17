@@ -11,19 +11,25 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.ui.AboutScreen
 import com.example.myapplication.ui.AddCardScreen
-import com.example.myapplication.ui.ChatScreen // ✅ Added Import
+import com.example.myapplication.ui.ChatScreen
 import com.example.myapplication.ui.DeckListScreen
+import com.example.myapplication.ui.FeedbackScreen
+import com.example.myapplication.ui.ProfileScreen
 import com.example.myapplication.ui.ReviewScreen
 import com.example.myapplication.ui.SettingsScreen
 import com.example.myapplication.ui.SplashScreen
+import com.example.myapplication.ui.StatisticsScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.viewmodel.MainViewModel
+import com.example.myapplication.viewmodel.ProfileViewModel
 import com.example.myapplication.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +56,8 @@ class MainActivity : ComponentActivity() {
                 AppNavigation(
                     navController = rememberNavController(),
                     viewModel = viewModel,
-                    settingsViewModel = settingsViewModel
+                    settingsViewModel = settingsViewModel,
+                    profileViewModel = profileViewModel
                 )
             }
         }
@@ -61,7 +68,8 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(
     navController: androidx.navigation.NavHostController,
     viewModel: MainViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     NavHost(navController = navController, startDestination = "splash") {
         // 1. Splash Screen
@@ -91,9 +99,29 @@ fun AppNavigation(
             SettingsScreen(navController, settingsViewModel)
         }
 
-        // 6. ✅ AI Chatbot Route (The Study Buddy)
+        // 6. AI Chatbot Route (The Study Buddy)
         composable("chat") {
             ChatScreen(navController)
+        }
+
+        // 7. About Screen
+        composable("about") {
+            AboutScreen(navController)
+        }
+
+        // 8. Feedback Screen
+        composable("feedback") {
+            FeedbackScreen(navController)
+        }
+
+        // 9. Statistics Screen
+        composable("statistics") {
+            StatisticsScreen(navController, viewModel)
+        }
+
+        // 10. Profile Screen
+        composable("profile") {
+            ProfileScreen(navController, profileViewModel)
         }
     }
 }
