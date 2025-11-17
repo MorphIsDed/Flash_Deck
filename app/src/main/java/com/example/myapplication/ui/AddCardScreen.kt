@@ -1,10 +1,10 @@
-package com.example.myapplication.ui // Matches your folder structure
+package com.example.myapplication.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Refresh // Changed from Translate to Refresh
+import androidx.compose.material.icons.filled.Refresh // Using Refresh as the translate icon
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,11 +18,9 @@ import com.example.myapplication.viewmodel.MainViewModel
 fun AddCardScreen(navController: NavController, viewModel: MainViewModel, deckId: Int) {
     var frontText by remember { mutableStateOf("") }
     var backText by remember { mutableStateOf("") }
-    // Fix: Added explicit type to avoid recursion errors
     val isLoading by viewModel.isLoading.collectAsState(initial = false)
 
     Scaffold(
-        // FIXED: Using hardcoded string instead of R.string
         topBar = { TopAppBar(title = { Text("Add New Card") }) }
     ) { padding ->
         Column(
@@ -34,7 +32,7 @@ fun AddCardScreen(navController: NavController, viewModel: MainViewModel, deckId
             OutlinedTextField(
                 value = frontText,
                 onValueChange = { frontText = it },
-                label = { Text("Front (Word/Question)") }, // Hardcoded string
+                label = { Text("Front (Word/Question)") },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
                     IconButton(
@@ -51,20 +49,21 @@ fun AddCardScreen(navController: NavController, viewModel: MainViewModel, deckId
             OutlinedTextField(
                 value = backText,
                 onValueChange = { backText = it },
-                label = { Text("Back (Definition/Answer)") }, // Hardcoded string
+                label = { Text("Back (Definition/Answer)") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 trailingIcon = {
                     IconButton(
-                        onClick = { viewModel.translateText(frontText) { res -> backText = res } },
+                        // ✅ CRITICAL FIX: Calling the new Smart Translation function
+                        onClick = { viewModel.detectLanguageAndTranslate(frontText) { res -> backText = res } },
                         enabled = frontText.isNotEmpty()
                     ) {
-                        // FIXED: Changed 'Translate' to 'Refresh' (Standard Icon)
+                        // ✅ CRITICAL FIX: Using Refresh icon to avoid import errors
                         Icon(Icons.Default.Refresh, contentDescription = "Translate")
                     }
                 }
             )
-            Text("Tap icon to Translate", style = MaterialTheme.typography.bodySmall)
+            Text("Tap icon to Auto-Translate", style = MaterialTheme.typography.bodySmall)
 
             if (isLoading) {
                 CircularProgressIndicator()
@@ -82,7 +81,7 @@ fun AddCardScreen(navController: NavController, viewModel: MainViewModel, deckId
             ) {
                 Icon(Icons.Default.Check, null)
                 Spacer(Modifier.width(8.dp))
-                Text("Save Card") // Hardcoded string
+                Text("Save Card")
             }
         }
     }

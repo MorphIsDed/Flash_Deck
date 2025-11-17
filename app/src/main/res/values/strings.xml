@@ -6,7 +6,7 @@
     <string name="tap_to_auto_define">Tap the magnifying glass to Auto-Define</string>
     <string name="back_definition_answer">Back (Definition/Answer)</string>
     <string name="translate">Translate</string>
-    <string name="tap_to_translate">Tap the translate icon for a sample translation</string>
+    <string name="tap_to_translate">Tap icon to Translate</string>
     <string name="save_card">Save Card</string>
     <string name="review_mode">Review Mode</string>
     <string name="no_cards_in_deck">No cards in this deck yet!</string>
@@ -18,4 +18,6 @@
     <string name="speak">Speak</string>
     <string name="listen">Listen</string>
     <string name="next_card">Next Card</string>
+    <string name="back">Back</string>
+    <string name="app_logo">App Logo</string>
 </resources>
