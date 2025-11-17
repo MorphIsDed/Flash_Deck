@@ -1,3 +1,11 @@
 <resources>
     <string name="Flash_Deck">My Application</string>
+    <string name="add_new_card">Add New Card</string>
+    <string name="front_word_question">Front (Word/Question)</string>
+    <string name="auto_define">Auto-Define</string>
+    <string name="tap_to_auto_define">Tap the magnifying glass to Auto-Define</string>
+    <string name="back_definition_answer">Back (Definition/Answer)</string>
+    <string name="translate">Translate</string>
+    <string name="tap_to_translate">Tap refresh to Translate (English -> Spanish)</string>
+    <string name="save_card">Save Card</string>
 </resources>

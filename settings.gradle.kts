@@ -1,6 +1,6 @@
 pluginManagement {
     repositories {
-        google {
+        google() {
             content {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
@@ -17,8 +17,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+    // NOTE: We removed the manual 'versionCatalogs' block here
+    // because Android Studio loads gradle/libs.versions.toml automatically.
 }
 
-rootProject.name = "Flash Deck"
+rootProject.name = "FlashDeck" // Or "My Application"
 include(":app")
- 
