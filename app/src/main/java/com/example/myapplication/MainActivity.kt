@@ -11,16 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.ui.AboutScreen
-import com.example.myapplication.ui.AddCardScreen
-import com.example.myapplication.ui.ChatScreen
-import com.example.myapplication.ui.DeckListScreen
-import com.example.myapplication.ui.FeedbackScreen
-import com.example.myapplication.ui.ProfileScreen
-import com.example.myapplication.ui.ReviewScreen
-import com.example.myapplication.ui.SettingsScreen
-import com.example.myapplication.ui.SplashScreen
-import com.example.myapplication.ui.StatisticsScreen
+import com.example.myapplication.ui.* // Imports all screens in ui package
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.viewmodel.MainViewModel
 import com.example.myapplication.viewmodel.ProfileViewModel
@@ -38,12 +29,16 @@ class MainActivity : ComponentActivity() {
         viewModel.initTTS()
 
         setContent {
+            // --- Observe Settings from ViewModel ---
             val currentTheme by settingsViewModel.currentTheme.collectAsState(initial = "tokyo_night")
             val darkModePreference by settingsViewModel.darkMode.collectAsState(initial = null)
             val fontSize by settingsViewModel.fontSize.collectAsState(initial = 0)
             val highContrast by settingsViewModel.highContrast.collectAsState(initial = false)
             val largeText by settingsViewModel.largeText.collectAsState(initial = false)
+            // ✅ ADDED: Observe Font Style
+            val fontStyle by settingsViewModel.fontStyle.collectAsState(initial = "Default")
 
+            // Determine if we are in dark mode (System default vs User Preference)
             val isDarkTheme = darkModePreference ?: isSystemInDarkTheme()
 
             MyApplicationTheme(
@@ -51,7 +46,8 @@ class MainActivity : ComponentActivity() {
                 theme = currentTheme,
                 fontSize = fontSize,
                 highContrast = highContrast,
-                largeText = largeText
+                largeText = largeText,
+                fontStyle = fontStyle // ✅ Pass Font Style to Theme
             ) {
                 AppNavigation(
                     navController = rememberNavController(),
@@ -99,7 +95,7 @@ fun AppNavigation(
             SettingsScreen(navController, settingsViewModel)
         }
 
-        // 6. AI Chatbot Route (The Study Buddy)
+        // 6. AI Chatbot Route
         composable("chat") {
             ChatScreen(navController)
         }
@@ -122,6 +118,11 @@ fun AppNavigation(
         // 10. Profile Screen
         composable("profile") {
             ProfileScreen(navController, profileViewModel)
+        }
+
+        // 11. Upload Notes Screen
+        composable("upload_notes") {
+            UploadNotesScreen(navController)
         }
     }
 }

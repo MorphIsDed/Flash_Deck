@@ -44,23 +44,23 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text("My Library", fontWeight = FontWeight.Bold) // Hardcoded
+                    Text("My Library", fontWeight = FontWeight.Bold) // Hardcoded String
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate("profile") }) {
                         Icon(
                             imageVector = Icons.Default.Person,
-                            contentDescription = "Profile", // Hardcoded
+                            contentDescription = "Profile",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
                 actions = {
-                    // AI Chat Button
+                    // ✅ AI Chat Button (Restored to Top Bar)
                     IconButton(onClick = { navController.navigate("chat") }) {
                         Icon(
                             imageVector = Icons.Default.Face,
-                            contentDescription = "AI Study Buddy", // Hardcoded
+                            contentDescription = "AI Study Buddy",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(32.dp)
                         )
@@ -69,7 +69,7 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                     IconButton(onClick = { navController.navigate("settings") }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings", // Hardcoded
+                            contentDescription = "Settings",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -85,9 +85,9 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Default.Add, "Add New Deck") // Hardcoded
+                Icon(Icons.Default.Add, "Add New Deck")
                 Spacer(Modifier.width(8.dp))
-                Text("New Deck") // Hardcoded
+                Text("New Deck")
             }
         }
     ) { padding ->
@@ -100,7 +100,7 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .padding(top = padding.calculateTopPadding()),
-                placeholder = { Text("Search decks...") }, // Hardcoded
+                placeholder = { Text("Search decks...") }, // Hardcoded String
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -110,12 +110,12 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                 )
             )
 
-            // Deck Count
+            // Deck Count Logic
             val deckCount = filteredDecks.size
             val countText = if (deckCount == 1) "1 Deck Found" else "$deckCount Decks Found"
 
             Text(
-                text = countText, // Hardcoded logic
+                text = countText,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -125,14 +125,14 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 80.dp
+                    bottom = 80.dp // Space for FAB
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (filteredDecks.isEmpty() && searchQuery.isNotBlank()) {
                     item {
                         Text(
-                            text = "No results found.", // Hardcoded
+                            text = "No results found.", // Hardcoded String
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(16.dp)
@@ -141,10 +141,8 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                 }
 
                 items(filteredDecks) { deck ->
-                    val scoreText = if (deck.score < 0) "N/A" else "${deck.score}%"
                     DeckItem(
                         name = deck.name,
-                        score = scoreText,
                         onReviewClick = { navController.navigate("review/${deck.id}") },
                         onAddCardClick = { navController.navigate("add_card/${deck.id}") }
                     )
@@ -155,12 +153,12 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text("Create New Deck") }, // Hardcoded
+                title = { Text("Create New Deck") }, // Hardcoded String
                 text = {
                     OutlinedTextField(
                         value = newDeckName,
                         onValueChange = { newDeckName = it },
-                        label = { Text("Deck Name") }, // Hardcoded
+                        label = { Text("Deck Name") }, // Hardcoded String
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -172,10 +170,10 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
                             newDeckName = ""
                             showDialog = false
                         }
-                    }) { Text("Create") } // Hardcoded
+                    }) { Text("Create") } // Hardcoded String
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDialog = false }) { Text("Cancel") } // Hardcoded
+                    TextButton(onClick = { showDialog = false }) { Text("Cancel") } // Hardcoded String
                 }
             )
         }
@@ -183,7 +181,7 @@ fun DeckListScreen(navController: NavController, viewModel: MainViewModel) {
 }
 
 @Composable
-fun DeckItem(name: String, score: String, onReviewClick: () -> Unit, onAddCardClick: () -> Unit) {
+fun DeckItem(name: String, onReviewClick: () -> Unit, onAddCardClick: () -> Unit) {
     val gradientBrush = Brush.horizontalGradient(
         colors = listOf(
             MaterialTheme.colorScheme.primaryContainer,
@@ -216,7 +214,7 @@ fun DeckItem(name: String, score: String, onReviewClick: () -> Unit, onAddCardCl
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Score: $score", // Hardcoded
+                    text = "Tap to study", // Hardcoded String
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                 )
@@ -227,7 +225,7 @@ fun DeckItem(name: String, score: String, onReviewClick: () -> Unit, onAddCardCl
                 modifier = Modifier
                     .background(Color.White.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
             ) {
-                Icon(Icons.Default.Add, "Add Cards", tint = MaterialTheme.colorScheme.onPrimaryContainer) // Hardcoded
+                Icon(Icons.Default.Add, "Add Cards", tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
     }

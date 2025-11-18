@@ -4,15 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.PreferencesManager
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
     private val preferencesManager = PreferencesManager(application)
 
-    // Theme options
+    // --- Options for UI ---
     val themes = listOf(
         "Tokyo Night" to "tokyo_night",
         "Blue Teal" to "blue_teal",
@@ -21,21 +19,27 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         "Orange" to "orange"
     )
 
-    // Font size options
     val fontSizes = listOf(
         "Small" to 1,
         "Default" to 0,
         "Large" to 2
     )
 
-    // State flows
-    val currentTheme = preferencesManager.theme
-    val darkMode = preferencesManager.darkMode
-    val fontSize = preferencesManager.fontSize
-    val highContrast = preferencesManager.highContrast
-    val reduceAnimations = preferencesManager.reduceAnimations
-    val largeText = preferencesManager.largeText
+    // ✅ ADDED: Font Style options
+    val fontStyles = listOf("Default", "Serif", "Monospace", "Cursive")
 
+    // --- State Flows from Preferences ---
+    val currentTheme: Flow<String> = preferencesManager.theme
+    val darkMode: Flow<Boolean?> = preferencesManager.darkMode
+    val fontSize: Flow<Int> = preferencesManager.fontSize
+    val highContrast: Flow<Boolean> = preferencesManager.highContrast
+    val reduceAnimations: Flow<Boolean> = preferencesManager.reduceAnimations
+    val largeText: Flow<Boolean> = preferencesManager.largeText
+
+    // ✅ ADDED: Font Style flow
+    val fontStyle: Flow<String> = preferencesManager.fontStyle
+
+    // --- Setters ---
     fun setTheme(theme: String) {
         viewModelScope.launch {
             preferencesManager.setTheme(theme)
@@ -71,5 +75,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             preferencesManager.setLargeText(enabled)
         }
     }
-}
 
+    fun setFontStyle(style: String) {
+        viewModelScope.launch {
+            preferencesManager.setFontStyle(style)
+        }
+    }
+}

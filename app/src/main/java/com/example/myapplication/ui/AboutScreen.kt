@@ -20,10 +20,10 @@ fun AboutScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About FlashDeck", fontWeight = FontWeight.Bold) },
+                title = { Text("About FlashDeck", fontWeight = FontWeight.Bold) }, // Hardcoded
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") // Hardcoded
                     }
                 }
             )
@@ -60,12 +60,12 @@ fun AboutScreen(navController: NavController) {
                         )
                         Column {
                             Text(
-                                text = "FlashDeck",
+                                text = "FlashDeck", // Hardcoded
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Version 1.0.0",
+                                text = "Version 1.0.0", // Hardcoded
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -73,7 +73,7 @@ fun AboutScreen(navController: NavController) {
                     }
 
                     Text(
-                        text = "The ultimate study companion powered by Google Gemini AI. Create decks, study smart, and master any subject.",
+                        text = "The ultimate study companion powered by Google Gemini AI. Create decks, study smart, and master any subject.", // Hardcoded
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -92,12 +92,13 @@ fun AboutScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Key Features",
+                        text = "Key Features", // Hardcoded
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
 
+                    // Hardcoded Feature List
                     FeatureItem(Icons.Default.SmartToy, "AI Study Buddy (Gemini)")
                     FeatureItem(Icons.Default.Palette, "Multiple Themes & Fonts")
                     FeatureItem(Icons.Default.TrendingUp, "Spaced Repetition")
@@ -119,19 +120,19 @@ fun AboutScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Developer",
+                        text = "Developer", // Hardcoded
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
 
                     Text(
-                        text = "Built by Abhinay Sahu",
+                        text = "Built with ❤️ using Kotlin & Jetpack Compose", // Hardcoded
                         style = MaterialTheme.typography.bodyMedium
                     )
 
                     Text(
-                        text = "Powered by Google Gemini AI",
+                        text = "Powered by Google Gemini AI", // Hardcoded
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -11,6 +11,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+// Extension property to create the DataStore
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class PreferencesManager(context: Context) {
@@ -23,7 +24,12 @@ class PreferencesManager(context: Context) {
         val HIGH_CONTRAST_KEY = booleanPreferencesKey("high_contrast")
         val REDUCE_ANIMATIONS_KEY = booleanPreferencesKey("reduce_animations")
         val LARGE_TEXT_KEY = booleanPreferencesKey("large_text")
+
+        // ✅ ADDED: Missing Key for Font Style
+        val FONT_STYLE_KEY = stringPreferencesKey("font_style")
     }
+
+    // --- Getters (Flows) ---
 
     val theme: Flow<String> = dataStore.data.map { preferences ->
         preferences[THEME_KEY] ?: "tokyo_night"
@@ -48,6 +54,13 @@ class PreferencesManager(context: Context) {
     val largeText: Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[LARGE_TEXT_KEY] ?: false
     }
+
+    // ✅ ADDED: Getter for Font Style
+    val fontStyle: Flow<String> = dataStore.data.map { preferences ->
+        preferences[FONT_STYLE_KEY] ?: "Default"
+    }
+
+    // --- Setters (Suspend Functions) ---
 
     suspend fun setTheme(theme: String) {
         dataStore.edit { preferences ->
@@ -88,5 +101,10 @@ class PreferencesManager(context: Context) {
             preferences[LARGE_TEXT_KEY] = enabled
         }
     }
-}
 
+    suspend fun setFontStyle(style: String) {
+        dataStore.edit { preferences ->
+            preferences[FONT_STYLE_KEY] = style
+        }
+    }
+}

@@ -6,10 +6,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.flashdeck.R
 import com.example.myapplication.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,10 +30,10 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.profile)) },
+                title = { Text("Edit Profile") }, // Hardcoded String
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") // Hardcoded String
                     }
                 }
             )
@@ -45,32 +43,32 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text(stringResource(R.string.name)) },
+                label = { Text("Name") }, // Hardcoded String
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it },
-                label = { Text(stringResource(R.string.phone_number)) },
+                label = { Text("Phone Number") }, // Hardcoded String
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text(stringResource(R.string.email)) },
+                label = { Text("Email") }, // Hardcoded String
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(16.dp))
             Button(
-                onClick = { 
+                onClick = {
                     profileViewModel.saveProfile(name, phone, email)
                     navController.popBackStack()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.save))
+                Text("Save Profile") // Hardcoded String
             }
         }
     }

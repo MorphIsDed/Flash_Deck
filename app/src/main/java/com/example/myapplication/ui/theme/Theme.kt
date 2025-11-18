@@ -292,21 +292,26 @@ fun MyApplicationTheme(
     fontSize: Int = 0, // 0 = default, 1 = small, 2 = large
     highContrast: Boolean = false,
     largeText: Boolean = false,
+    fontStyle: String = "Default", // ✅ ADDED THIS PARAMETER
     content: @Composable () -> Unit
 ) {
     val colorScheme = getColorScheme(theme, darkTheme, highContrast)
-    
-    // Adjust typography based on font size and large text setting
+
+    // ✅ DYNAMIC TYPOGRAPHY LOGIC
+    // Adjust base typography based on font style and size settings
+    val baseTypography = getTypography(fontStyle)
     val typography = when {
-        largeText || fontSize == 2 -> Typography.copy(
-            bodyLarge = Typography.bodyLarge.copy(fontSize = Typography.bodyLarge.fontSize * 1.2f),
-            titleLarge = Typography.titleLarge.copy(fontSize = Typography.titleLarge.fontSize * 1.2f)
+        largeText || fontSize == 2 -> baseTypography.copy(
+            bodyLarge = baseTypography.bodyLarge.copy(fontSize = baseTypography.bodyLarge.fontSize * 1.2f),
+            titleLarge = baseTypography.titleLarge.copy(fontSize = baseTypography.titleLarge.fontSize * 1.2f),
+            headlineMedium = baseTypography.headlineMedium.copy(fontSize = baseTypography.headlineMedium.fontSize * 1.2f)
         )
-        fontSize == 1 -> Typography.copy(
-            bodyLarge = Typography.bodyLarge.copy(fontSize = Typography.bodyLarge.fontSize * 0.9f),
-            titleLarge = Typography.titleLarge.copy(fontSize = Typography.titleLarge.fontSize * 0.9f)
+        fontSize == 1 -> baseTypography.copy(
+            bodyLarge = baseTypography.bodyLarge.copy(fontSize = baseTypography.bodyLarge.fontSize * 0.9f),
+            titleLarge = baseTypography.titleLarge.copy(fontSize = baseTypography.titleLarge.fontSize * 0.9f),
+            headlineMedium = baseTypography.headlineMedium.copy(fontSize = baseTypography.headlineMedium.fontSize * 0.9f)
         )
-        else -> Typography
+        else -> baseTypography
     }
 
     val view = LocalView.current
@@ -320,7 +325,7 @@ fun MyApplicationTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = typography,
+        typography = typography, // ✅ Using the new dynamic typography
         content = content
     )
 }

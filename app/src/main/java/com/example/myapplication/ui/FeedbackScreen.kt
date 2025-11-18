@@ -11,14 +11,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import com.example.flashdeck.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,10 +28,10 @@ fun FeedbackScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.submit_feedback), fontWeight = FontWeight.Bold) },
+                title = { Text("Submit Feedback", fontWeight = FontWeight.Bold) }, // Hardcoded
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") // Hardcoded
                     }
                 }
             )
@@ -63,7 +60,7 @@ fun FeedbackScreen(navController: NavController) {
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    
+
                     Text(
                         text = "Your feedback helps us improve FlashDeck. Share your thoughts, report bugs, or suggest new features.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -73,7 +70,7 @@ fun FeedbackScreen(navController: NavController) {
                     OutlinedTextField(
                         value = emailText,
                         onValueChange = { emailText = it },
-                        label = { Text(stringResource(R.string.your_email)) },
+                        label = { Text("Your Email (Optional)") }, // Hardcoded
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp)
@@ -82,12 +79,12 @@ fun FeedbackScreen(navController: NavController) {
                     OutlinedTextField(
                         value = feedbackText,
                         onValueChange = { feedbackText = it },
-                        label = { Text(stringResource(R.string.feedback)) },
+                        label = { Text("Feedback") }, // Hardcoded
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 200.dp),
                         maxLines = 10,
-                        placeholder = { Text(stringResource(R.string.feedback_hint)) },
+                        placeholder = { Text("Tell us what you think...") }, // Hardcoded
                         shape = RoundedCornerShape(12.dp)
                     )
 
@@ -104,7 +101,7 @@ fun FeedbackScreen(navController: NavController) {
                     ) {
                         Icon(Icons.Default.Send, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.send_feedback))
+                        Text("Send Feedback") // Hardcoded
                     }
                 }
             }
@@ -142,7 +139,7 @@ fun FeedbackScreen(navController: NavController) {
         AlertDialog(
             onDismissRequest = { showSuccessDialog = false },
             title = { Text("Thank you!") },
-            text = { Text(stringResource(R.string.feedback_sent)) },
+            text = { Text("Your feedback has been prepared. Please select an email app to send it.") }, // Hardcoded
             confirmButton = {
                 Button(onClick = { showSuccessDialog = false }) {
                     Text("OK")
@@ -159,7 +156,7 @@ private fun sendFeedback(context: android.content.Context, email: String, feedba
         putExtra(Intent.EXTRA_SUBJECT, "FlashDeck App Feedback")
         putExtra(Intent.EXTRA_TEXT, buildFeedbackMessage(email, feedback))
     }
-    
+
     try {
         context.startActivity(Intent.createChooser(intent, "Send feedback via"))
     } catch (e: Exception) {
@@ -180,4 +177,3 @@ private fun buildFeedbackMessage(email: String, feedback: String): String {
         append("Android Version: ${android.os.Build.VERSION.RELEASE}")
     }
 }
-
